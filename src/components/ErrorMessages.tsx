@@ -2,7 +2,7 @@ import { ErrorMessagesNotification } from '../api/todos';
 import { useEffect } from 'react';
 import classNames from 'classnames';
 
-type ErrorMessagesProps = {
+export type ErrorMessagesProps = {
   error: ErrorMessagesNotification | null;
   setError: (error: ErrorMessagesNotification | null) => void;
 };

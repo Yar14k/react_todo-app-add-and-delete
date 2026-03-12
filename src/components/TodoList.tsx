@@ -141,8 +141,6 @@ const TodoList: React.FC = () => {
           </button>
         </footer>
       )}
-
-      <ErrorMessages error={error} setError={setError} />
     </>
   );
 };
