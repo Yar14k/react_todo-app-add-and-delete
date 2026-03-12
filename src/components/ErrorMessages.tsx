@@ -35,7 +35,7 @@ const ErrorMessages: React.FC<ErrorMessagesProps> = ({ error, setError }) => {
         data-cy="HideErrorButton"
         type="button"
         className="delete"
-        onClick={() => setError('')}
+        onClick={() => setError(null)}
       />
       {error}
     </div>

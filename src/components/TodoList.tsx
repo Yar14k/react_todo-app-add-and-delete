@@ -7,20 +7,16 @@ import { createTodo } from '../api/todos';
 import { USER_ID } from '../api/todos';
 import { ErrorMessagesNotification } from '../api/todos';
 import { ErrorMessagesProps } from '../components/ErrorMessages';
+import Footer from './Footer';
+import { Filter } from './Footer';
 
-type Todo = {
+export type Todo = {
   id: string | number;
   title: string;
   completed: boolean;
   userId: number;
   loading?: boolean;
 };
-
-enum Filter {
-  All = 'all',
-  Active = 'active',
-  Completed = 'completed',
-}
 
 const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -66,7 +62,9 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
     };
 
     loadTodos();
-  }, []);
+  }, [setError]);
+
+  const allCompleted = todos.length > 0 && todos.every(todo => todo.completed);
 
   const visibleTodos = todos.filter(todo => {
     if (filter === Filter.Active) {
@@ -80,24 +78,6 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
     return true;
   });
 
-  const allCompleted = todos.length > 0 && todos.every(todo => todo.completed);
-
-  const filters = [
-    { value: Filter.All, label: 'All', href: '#/', cy: 'FilterLinkAll' },
-    {
-      value: Filter.Active,
-      label: 'Active',
-      href: '#/active',
-      cy: 'FilterLinkActive',
-    },
-    {
-      value: Filter.Completed,
-      label: 'Completed',
-      href: '#/completed',
-      cy: 'FilterLinkCompleted',
-    },
-  ];
-
   return (
     <>
       <CreateTodo
@@ -110,36 +90,7 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
           <TodoItem key={todo.id} todo={todo} setTodos={setTodos} />
         ))}
       </section>
-      {todos.length > 0 && (
-        <footer className="todoapp__footer" data-cy="Footer">
-          <span className="todo-count" data-cy="TodosCounter">
-            {todos.filter(todo => !todo.completed).length} items left
-          </span>
-
-          <nav className="filter" data-cy="Filter">
-            {filters.map(({ value, label, href, cy }) => (
-              <a
-                key={value}
-                href={href}
-                data-cy={cy}
-                className={`filter__link ${filter === value ? 'selected' : ''}`}
-                onClick={() => setFilter(value)}
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
-
-          <button
-            type="button"
-            className="todoapp__clear-completed"
-            data-cy="ClearCompletedButton"
-            disabled={todos.every(todo => !todo.completed)}
-          >
-            Clear completed
-          </button>
-        </footer>
-      )}
+      <Footer todos={todos} filter={filter} setFilter={setFilter} />
     </>
   );
 };
