@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { deleteTodo } from '../api/todos';
 import classNames from 'classnames';
+
 type Todo = {
   id: number;
   title: string;
   completed: boolean;
   userId: number;
+  loading?: boolean;
 };
 
 type Props = {
@@ -53,7 +55,10 @@ const TodoItem = ({ todo, setTodos }: Props) => {
       >
         ×
       </button>
-      <div data-cy="TodoLoader" className="modal overlay">
+      <div
+        data-cy="TodoLoader"
+        className={`modal overlay ${todo.loading ? 'is-active' : ''}`}
+      >
         <div className="modal-background has-background-white-ter" />
         <div className="loader" />
       </div>

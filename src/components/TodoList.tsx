@@ -9,10 +9,11 @@ import ErrorMessages from './ErrorMessages';
 import { ErrorMessagesNotification } from '../api/todos';
 
 type Todo = {
-  id: number;
+  id: string | number;
   title: string;
   completed: boolean;
   userId: number;
+  loading?: boolean;
 };
 
 enum Filter {
@@ -27,15 +28,28 @@ const TodoList: React.FC = () => {
   const [error, setError] = useState<ErrorMessagesNotification | null>(null);
 
   const handleAddTodo = async (title: string) => {
+    const tempTodo: Todo = {
+      id: 'temp-' + Date.now(),
+      title,
+      completed: false,
+      userId: USER_ID,
+      loading: true,
+    };
+
+    setTodos(prev => [...prev, tempTodo]);
+
     try {
-      const newTodo = await createTodo({
+      const savedTodo = await createTodo({
         title,
         userId: USER_ID,
         completed: false,
       });
 
-      setTodos(prev => [...prev, newTodo]);
+      setTodos(prev => {
+        prev.map(todo => (todo.id === tempTodo.id ? savedTodo : todo));
+      });
     } catch {
+      setTodos(prev => prev.filter(todo => todo.id !== tempTodo.id));
       setError(ErrorMessagesNotification.ADD);
     }
   };
