@@ -3,9 +3,12 @@ import { UserWarning } from './UserWarning';
 import { USER_ID } from './api/todos';
 import TodoList from './components/TodoList';
 import ErrorMessages from './components/ErrorMessages';
-import { ErrorMessagesProps } from './components/ErrorMessages';
+import { ErrorMessagesNotification } from './api/todos';
+import { useState } from 'react';
 
-export const App: React.FC<ErrorMessagesProps> = ({ error, setError }) => {
+export const App: React.FC = () => {
+  const [error, setError] = useState<ErrorMessagesNotification | null>(null);
+
   if (!USER_ID) {
     return <UserWarning />;
   }
@@ -15,7 +18,7 @@ export const App: React.FC<ErrorMessagesProps> = ({ error, setError }) => {
       <h1 className="todoapp__title">todos</h1>
 
       <div className="todoapp__content">
-        <TodoList />
+        <TodoList error={error} setError={setError} />
       </div>
       <ErrorMessages error={error} setError={setError} />
     </div>

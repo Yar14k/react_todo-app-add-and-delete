@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import CreateTodo from './CreateTodo';
 import { createTodo } from '../api/todos';
 import { USER_ID } from '../api/todos';
-import ErrorMessages from './ErrorMessages';
 import { ErrorMessagesNotification } from '../api/todos';
+import { ErrorMessagesProps } from '../components/ErrorMessages';
 
 type Todo = {
   id: string | number;
@@ -22,10 +22,9 @@ enum Filter {
   Completed = 'completed',
 }
 
-const TodoList: React.FC = () => {
+const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>(Filter.All);
-  const [error, setError] = useState<ErrorMessagesNotification | null>(null);
 
   const handleAddTodo = async (title: string) => {
     const tempTodo: Todo = {
