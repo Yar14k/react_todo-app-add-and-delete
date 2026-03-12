@@ -10,13 +10,13 @@ import { ErrorMessagesProps } from '../components/ErrorMessages';
 import Footer from './Footer';
 import { Filter } from './Footer';
 
-export type Todo = {
+export interface Todo {
   id: string | number;
   title: string;
   completed: boolean;
   userId: number;
   loading?: boolean;
-};
+}
 
 const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -41,7 +41,7 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
       });
 
       setTodos(prev => {
-        prev.map(todo => (todo.id === tempTodo.id ? savedTodo : todo));
+        return prev.map(todo => (todo.id === tempTodo.id ? savedTodo : todo));
       });
     } catch {
       setTodos(prev => prev.filter(todo => todo.id !== tempTodo.id));

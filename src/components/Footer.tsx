@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { Todo } from './TodoList';
 
 export enum Filter {
@@ -43,7 +44,9 @@ const Footer: React.FC<FilterBarProps> = ({ todos, filter, setFilter }) => {
                 key={value}
                 href={href}
                 data-cy={cy}
-                className={`filter__link ${filter === value ? 'selected' : ''}`}
+                className={classNames('filter__link', {
+                  selected: filter === value,
+                })}
                 onClick={() => setFilter(value)}
               >
                 {label}

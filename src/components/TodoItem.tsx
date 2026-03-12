@@ -1,14 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { deleteTodo } from '../api/todos';
 import classNames from 'classnames';
-
-type Todo = {
-  id: number;
-  title: string;
-  completed: boolean;
-  userId: number;
-  loading?: boolean;
-};
+import { Todo } from './TodoList';
 
 type Props = {
   todo: Todo;
@@ -30,6 +23,14 @@ const TodoItem = ({ todo, setTodos }: Props) => {
     }
   };
 
+  const toggleTodo = (id: number) => {
+    setTodos(prevTodos => {
+      return prevTodos.map(t => {
+        return t.id === id ? { ...t, completed: !t.completed } : t;
+      });
+    });
+  };
+
   return (
     <div
       data-cy="Todo"
@@ -42,6 +43,7 @@ const TodoItem = ({ todo, setTodos }: Props) => {
           type="checkbox"
           className="todo__status"
           checked={todo.completed}
+          onChange={() => toggleTodo(todo.id)}
         />
       </label>
       <span data-cy="TodoTitle" className="todo__title">
@@ -57,7 +59,9 @@ const TodoItem = ({ todo, setTodos }: Props) => {
       </button>
       <div
         data-cy="TodoLoader"
-        className={`modal overlay ${todo.loading ? 'is-active' : ''}`}
+        className={classNames('modal overlay', {
+          'is-active': todo.loading,
+        })}
       >
         <div className="modal-background has-background-white-ter" />
         <div className="loader" />
