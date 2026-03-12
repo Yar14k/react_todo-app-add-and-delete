@@ -1,5 +1,6 @@
 import { ErrorMessagesNotification } from '../api/todos';
 import { useEffect } from 'react';
+import classNames from 'classnames';
 
 type ErrorMessagesProps = {
   error: ErrorMessagesNotification | null;
@@ -22,15 +23,19 @@ const ErrorMessages: React.FC<ErrorMessagesProps> = ({ error, setError }) => {
   return (
     <div
       data-cy="ErrorNotification"
-      className={`notification is-danger is-light has-text-weight-normal ${
-        error ? '' : 'hidden'
-      }`}
+      className={classNames(
+        'notification',
+        'is-danger',
+        'is-light',
+        'has-text-weight-normal',
+        { hidden: !error },
+      )}
     >
       <button
         data-cy="HideErrorButton"
         type="button"
         className="delete"
-        onClick={() => setError(null)}
+        onClick={() => setError('')}
       />
       {error}
     </div>
