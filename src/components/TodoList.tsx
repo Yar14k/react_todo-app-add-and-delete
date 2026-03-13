@@ -34,14 +34,16 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
     setTodos(prev => [...prev, tempTodo]);
 
     try {
-      const savedTodo = await createTodo({
+      const savedTodo = (await createTodo({
         title,
         userId: USER_ID,
         completed: false,
-      });
+      })) as Todo;
 
       setTodos(prev => {
-        return prev.map(todo => (todo.id === tempTodo.id ? savedTodo : todo));
+        return prev.map(todo =>
+          todo.id === tempTodo.id ? { ...savedTodo, completed: false } : todo,
+        );
       });
     } catch {
       setTodos(prev => prev.filter(todo => todo.id !== tempTodo.id));
