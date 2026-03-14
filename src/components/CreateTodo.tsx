@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { ErrorMessagesNotification } from '../api/todos';
 import { useEffect, useRef, useState } from 'react';
 
-
 type Props = {
   onAdd: (title: string) => Promise<void>;
   allCompleted: boolean;
@@ -26,7 +25,7 @@ const CreateTodo: React.FC<Props> = ({ onAdd, allCompleted, setError }) => {
     setIsLoading(true);
     try {
       await onAdd(todo);
-      setTodo('');
+      setTodo(todo);
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
