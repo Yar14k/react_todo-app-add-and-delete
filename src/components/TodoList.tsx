@@ -9,6 +9,7 @@ import { ErrorMessagesNotification } from '../api/todos';
 import { ErrorMessagesProps } from '../components/ErrorMessages';
 import Footer from './Footer';
 import { Filter } from './Footer';
+import { useRef } from 'react';
 
 export interface Todo {
   id: string | number;
@@ -18,10 +19,11 @@ export interface Todo {
   loading?: boolean;
 }
 
-const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
+const TodoList: React.FC<ErrorMessagesProps> = ({ error, setError }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [filter, setFilter] = useState<Filter>(Filter.All);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAddTodo = async (title: string) => {
     const trimmedTitle = title.trim();
@@ -54,6 +56,7 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
     } catch {
       setTempTodo(null);
       setError(ErrorMessagesNotification.ADD);
+      throw new Error(ErrorMessagesNotification.ADD);
     }
   };
 
@@ -92,10 +95,16 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
         onAdd={handleAddTodo}
         allCompleted={allCompleted}
         setError={setError}
+        inputRef={inputRef}
       />
       <section className="todoapp__main" data-cy="TodoList">
         {visibleTodos.map(todo => (
-          <TodoItem key={todo.id} todo={todo} setTodos={setTodos} />
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            setTodos={setTodos}
+            inputRef={inputRef}
+          />
         ))}
 
         {tempTodo && (

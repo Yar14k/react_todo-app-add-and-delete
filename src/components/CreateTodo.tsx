@@ -1,17 +1,22 @@
 import classNames from 'classnames';
 import { ErrorMessagesNotification } from '../api/todos';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   onAdd: (title: string) => Promise<void>;
   allCompleted: boolean;
   setError: (error: ErrorMessagesNotification | null) => void;
+  inputRef: React.RefObject<HTMLInputElement>;
 };
 
-const CreateTodo: React.FC<Props> = ({ onAdd, allCompleted, setError }) => {
+const CreateTodo: React.FC<Props> = ({
+  onAdd,
+  allCompleted,
+  setError,
+  inputRef,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [todo, setTodo] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -29,8 +34,12 @@ const CreateTodo: React.FC<Props> = ({ onAdd, allCompleted, setError }) => {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
+      setTodo('');
     } catch (error) {
       setError(ErrorMessagesNotification.ADD);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     } finally {
       setIsLoading(false);
     }
