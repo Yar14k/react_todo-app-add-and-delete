@@ -20,33 +20,39 @@ export interface Todo {
 
 const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [filter, setFilter] = useState<Filter>(Filter.All);
 
   const handleAddTodo = async (title: string) => {
-    const tempTodo: Todo = {
+    const trimmedTitle = title.trim();
+
+    if (!trimmedTitle) {
+      setError(ErrorMessagesNotification.EMPTY_TITLE);
+
+      return;
+    }
+
+    const temp: Todo = {
       id: 'temp-' + Date.now(),
-      title,
+      title: trimmedTitle,
       completed: false,
       userId: USER_ID,
       loading: true,
     };
 
-    setTodos(prev => [...prev, tempTodo]);
+    setTempTodo(temp);
 
     try {
       const savedTodo = (await createTodo({
-        title,
+        title: trimmedTitle,
         userId: USER_ID,
         completed: false,
       })) as Todo;
 
-      setTodos(prev => {
-        return prev.map(todo =>
-          todo.id === tempTodo.id ? { ...savedTodo, completed: false } : todo,
-        );
-      });
+      setTodos(prev => [...prev, savedTodo]);
+      setTempTodo(null);
     } catch {
-      setTodos(prev => prev.filter(todo => todo.id !== tempTodo.id));
+      setTempTodo(null);
       setError(ErrorMessagesNotification.ADD);
     }
   };
@@ -91,6 +97,10 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
         {visibleTodos.map(todo => (
           <TodoItem key={todo.id} todo={todo} setTodos={setTodos} />
         ))}
+
+        {tempTodo && (
+          <TodoItem key={tempTodo.id} todo={tempTodo} setTodos={setTodos} />
+        )}
       </section>
       <Footer todos={todos} filter={filter} setFilter={setFilter} />
     </>

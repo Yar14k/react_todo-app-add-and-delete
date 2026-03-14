@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { ErrorMessagesNotification } from '../api/todos';
 import { useEffect, useRef, useState } from 'react';
 
+
 type Props = {
   onAdd: (title: string) => Promise<void>;
   allCompleted: boolean;
@@ -10,10 +11,10 @@ type Props = {
 
 const CreateTodo: React.FC<Props> = ({ onAdd, allCompleted, setError }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [todo, setTodo] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const todo = new FormData(form).get('todo') as string;
 
     if (!todo.trim()) {
       setError(ErrorMessagesNotification.EMPTY_TITLE);
@@ -21,18 +22,20 @@ const CreateTodo: React.FC<Props> = ({ onAdd, allCompleted, setError }) => {
       return;
     }
 
+    setError(null);
     setIsLoading(true);
     try {
       await onAdd(todo);
-      form.reset();
+      setTodo('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     } catch (error) {
       setError(ErrorMessagesNotification.ADD);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -56,6 +59,8 @@ const CreateTodo: React.FC<Props> = ({ onAdd, allCompleted, setError }) => {
           ref={inputRef}
           placeholder="What needs to be done?"
           disabled={isLoading}
+          onChange={e => setTodo(e.target.value)}
+          value={todo}
         />
       </form>
     </header>
