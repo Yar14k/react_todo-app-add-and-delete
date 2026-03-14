@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { deleteTodo } from '../api/todos';
+import { deleteTodo, ErrorMessagesNotification } from '../api/todos';
 import classNames from 'classnames';
 import { Todo } from './TodoList';
 import { useState } from 'react';
@@ -8,9 +8,10 @@ type Props = {
   todo: Todo;
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
   inputRef: React.RefObject<HTMLInputElement>;
+  setError: (error: ErrorMessagesNotification | null) => void;
 };
 
-const TodoItem = ({ todo, setTodos, inputRef }: Props) => {
+const TodoItem = ({ todo, setTodos, inputRef, setError }: Props) => {
   const [isDeleting, setDelete] = useState(false);
   const handleDelete = async () => {
     setDelete(true);
@@ -26,7 +27,7 @@ const TodoItem = ({ todo, setTodos, inputRef }: Props) => {
         inputRef.current?.focus();
       }, 0);
     } catch (error) {
-      alert('Failed to delete todo');
+      setError(ErrorMessagesNotification.DELETE);
       setDelete(false);
     }
   };

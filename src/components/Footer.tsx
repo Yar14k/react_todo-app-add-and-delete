@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 import { Todo } from './TodoList';
+import { deleteTodo } from '../api/todos';
+import { ErrorMessagesNotification } from '../api/todos';
 
 export enum Filter {
   All = 'all',
@@ -11,9 +13,19 @@ type FilterBarProps = {
   todos: Todo[];
   filter: Filter;
   setFilter: React.Dispatch<React.SetStateAction<Filter>>;
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  inputRef: React.RefObject<HTMLInputElement>;
+  setError: (error: ErrorMessagesNotification | null) => void;
 };
 
-const Footer: React.FC<FilterBarProps> = ({ todos, filter, setFilter }) => {
+const Footer: React.FC<FilterBarProps> = ({
+  todos,
+  filter,
+  setFilter,
+  setTodos,
+  inputRef,
+  setError,
+}) => {
   const filters = [
     { value: Filter.All, label: 'All', href: '#/', cy: 'FilterLinkAll' },
     {
@@ -29,6 +41,37 @@ const Footer: React.FC<FilterBarProps> = ({ todos, filter, setFilter }) => {
       cy: 'FilterLinkCompleted',
     },
   ];
+
+  const handleClearCompleted = async () => {
+    const completedTodos = todos.filter(todo => todo.completed);
+    let hasError = false;
+    const successfullyDeletedIds: number[] = [];
+
+    await Promise.all(
+      completedTodos.map(async todo => {
+        try {
+          await deleteTodo(todo.id);
+          successfullyDeletedIds.push(todo.id);
+        } catch (error) {
+          hasError = true;
+        }
+      }),
+    );
+
+    setTodos(prev =>
+      prev.filter(todo => !successfullyDeletedIds.includes(todo.id)),
+    );
+
+    if (hasError) {
+      setError(ErrorMessagesNotification.DELETE);
+    } else {
+      setError(null);
+    }
+
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
 
   return (
     <>
@@ -58,6 +101,7 @@ const Footer: React.FC<FilterBarProps> = ({ todos, filter, setFilter }) => {
             type="button"
             className="todoapp__clear-completed"
             data-cy="ClearCompletedButton"
+            onClick={handleClearCompleted}
             disabled={todos.every(todo => !todo.completed)}
           >
             Clear completed

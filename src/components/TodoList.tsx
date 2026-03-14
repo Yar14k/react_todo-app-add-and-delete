@@ -19,7 +19,7 @@ export interface Todo {
   loading?: boolean;
 }
 
-const TodoList: React.FC<ErrorMessagesProps> = ({ error, setError }) => {
+const TodoList: React.FC<ErrorMessagesProps> = ({ setError }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [filter, setFilter] = useState<Filter>(Filter.All);
@@ -104,14 +104,28 @@ const TodoList: React.FC<ErrorMessagesProps> = ({ error, setError }) => {
             todo={todo}
             setTodos={setTodos}
             inputRef={inputRef}
+            setError={setError}
           />
         ))}
 
         {tempTodo && (
-          <TodoItem key={tempTodo.id} todo={tempTodo} setTodos={setTodos} />
+          <TodoItem
+            key={tempTodo.id}
+            todo={tempTodo}
+            setTodos={setTodos}
+            inputRef={inputRef}
+            setError={setError}
+          />
         )}
       </section>
-      <Footer todos={todos} filter={filter} setFilter={setFilter} />
+      <Footer
+        todos={todos}
+        filter={filter}
+        setFilter={setFilter}
+        setTodos={setTodos}
+        inputRef={inputRef}
+        setError={setError}
+      />
     </>
   );
 };
